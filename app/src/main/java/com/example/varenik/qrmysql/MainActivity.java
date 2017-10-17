@@ -1,8 +1,8 @@
 package com.example.varenik.qrmysql;
 
 
-
-import android.os.AsyncTask;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,22 +15,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+
     private Button btnSearche;
     private Button btnEdit;
-    public static TextView tvUpdate;
-
+    public TextView tvUpdate = null;
     private ProgressBar progressBar;
     private ConnectToURLFragment connectToURLFragment;
     private String TAG_FRAGMENT = "TAG_URL_connect";
-    private String url = "http://varenikhome.ddns.net/PHPScript/db_select.php?number=";
+    private String URL_ADDRESS = "http://varenikhome.ddns.net/PHPScript/db_select.php?number=";
     private EditText etInventNumber;
+    public static TextView tvInfoItem;
 
 
     @Override
@@ -49,19 +50,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnEdit.setOnClickListener(this);
         btnSearche.setOnClickListener(this);
         //==============Fragment =================
+
         etInventNumber = (EditText) findViewById(R.id.etInventNumber);
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-
+        tvInfoItem = (TextView) findViewById(R.id.tvInfoItem);
 
         connectToURLFragment = getConnectToURLFragment();
         //Передаємо об"єкту MainFragment актівіті
@@ -69,7 +60,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // визначаємо в якому стані AsyncTask
         // mainFragment.getIsWork() - повертає true якщо виконується процес, false - якщо він в стані спокою
         showProgress(connectToURLFragment.getIsWork());
+
+
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                IntentIntegrator scanIntegrator = new IntentIntegrator(MainActivity.this);
+                scanIntegrator.initiateScan();
+
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Action", null).show();
+            }
+        });
+
     }
+
+
+
+
 
 
     // Fragment запускає цей метод (показує стан AsyncTasks)
@@ -124,27 +136,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnSearche:
-//                connectToURLFragment.startGetJSON(url+"'"+ etInventNumber.getText().toString()+"'");
-//                connectToURLFragment.
-//                tvUpdate.setText(connectToURLFragment.URLRequest);
+                showProgress(true);
 
-                try {
-                    connectToURLFragment.connectToURLAsyncTask.execute(url+"'"+ etInventNumber.getText().toString()+"'").get(300, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (TimeoutException e) {
-                    e.printStackTrace();
-                }
-                tvUpdate.setText(connectToURLFragment.URLRequest);
+                connectToURLFragment.startGetJSON(Const.URL_ADDRESS + "'" + etInventNumber.getText().toString() + "'");
+
                 break;
 
-               // tvUpdate.setText(connectToURLFragment.getURLRequest());
+            // tvUpdate.setText(connectToURLFragment.getURLRequest());
 
 
             case R.id.btnEdit:
@@ -152,6 +155,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+
+    // Get the results:
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                etInventNumber.setText(result.getContents());
+                connectToURLFragment.startGetJSON(Const.URL_ADDRESS + "'" + etInventNumber.getText().toString() + "'");
+
+                //Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+
 
 
 }

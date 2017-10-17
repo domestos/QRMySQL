@@ -14,11 +14,10 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * Created by varenik on 15.10.17.
-
- щоб клав вернув String  в форматі JSON необхіно
- викликати його метод startGetJSON()
- та отримати змінну за допомогою getURLRequest()
-
+ * <p>
+ * щоб клав вернув String  в форматі JSON необхіно
+ * викликати його метод startGetJSON()
+ * та отримати змінну за допомогою getURLRequest()
  */
 
 public class ConnectToURLFragment extends android.app.Fragment {
@@ -26,8 +25,7 @@ public class ConnectToURLFragment extends android.app.Fragment {
     private boolean isWork = false; //інформує актівіті про стан AsyncTask
     public ConnectToURLAsyncTask connectToURLAsyncTask;
     private MainActivity activity;
-    public String URLRequest = null ;
-
+    public String URLRequest = "waiting";
 
 
     @Override
@@ -53,17 +51,10 @@ public class ConnectToURLFragment extends android.app.Fragment {
         return activity;
     }
 
-//    public void startGetJSON(String url) {
-//        connectToURLAsyncTask = new ConnectToURLAsyncTask();
-//        try {
-//            connectToURLAsyncTask.execute(url).get();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
+    public void startGetJSON(String url) {
+        connectToURLAsyncTask = new ConnectToURLAsyncTask();
+        connectToURLAsyncTask.execute(url);
+    }
 
 
     public void stop() {
@@ -80,10 +71,8 @@ public class ConnectToURLFragment extends android.app.Fragment {
     // ==================== INTO CLASS =======================
     class ConnectToURLAsyncTask extends AsyncTask<String, String, String> {
 
-
         @Override
         protected void onPreExecute() {
-
             isWork = true;
             activity.showProgress(isWork);
         }
@@ -91,34 +80,28 @@ public class ConnectToURLFragment extends android.app.Fragment {
 
         @Override
         protected String doInBackground(String... params) {
-
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
                 publishProgress(doConnect(params[0].toString()));
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             return doConnect(params[0].toString());
-
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-
-
         }
-
 
 
         @Override
         protected void onPostExecute(String s) {
-            //   activity = getMainActvity();
+            s = new ParsarData().dataParsed(s);
+            activity.tvInfoItem.setText(s);
             activity.showProgress(false);
             isWork = false;
-            URLRequest = s;
             connectToURLAsyncTask = null;
         }
 
@@ -127,11 +110,14 @@ public class ConnectToURLFragment extends android.app.Fragment {
             Log.i("log", "cancelled");
             isWork = false;
             activity.showProgress(isWork);
+
             super.onCancelled();
         }
 
-        private String doConnect(String s) {
 
+
+
+        private String doConnect(String s) {
             URL url = null;
 
             try {
@@ -140,7 +126,6 @@ public class ConnectToURLFragment extends android.app.Fragment {
                 e.printStackTrace();
                 return "ERROR " + e.getMessage();
             }
-
 
             HttpURLConnection httpURLConnection = null;
             try {
@@ -155,7 +140,6 @@ public class ConnectToURLFragment extends android.app.Fragment {
                 e.printStackTrace();
                 return "Error" + e.getMessage();
             }
-
             try {
                 if (HttpURLConnection.HTTP_OK == httpURLConnection.getResponseCode()) {
                     StringBuilder sb = new StringBuilder();
@@ -176,7 +160,7 @@ public class ConnectToURLFragment extends android.app.Fragment {
             }
         } //end do Connect
 
-        } // end into class
+    } // end into class
 
 
 }

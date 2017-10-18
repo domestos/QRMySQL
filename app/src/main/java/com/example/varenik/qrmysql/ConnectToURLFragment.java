@@ -26,6 +26,9 @@ public class ConnectToURLFragment extends android.app.Fragment {
     public ConnectToURLAsyncTask connectToURLAsyncTask;
     private MainActivity activity;
     public String URLRequest = "waiting";
+    public Const c = new Const();
+   private ParsarData  parsarData= new ParsarData();
+
 
 
     @Override
@@ -98,10 +101,12 @@ public class ConnectToURLFragment extends android.app.Fragment {
 
         @Override
         protected void onPostExecute(String s) {
-            s = new ParsarData().dataParsed(s);
-            activity.tvInfoItem.setText(s);
+
+            Const.saveInfoItem = s;
             activity.showProgress(false);
             isWork = false;
+            s =parsarData.dataParsed(s);
+            activity.tvInfoItem.setText(s);
             connectToURLAsyncTask = null;
         }
 
@@ -145,10 +150,14 @@ public class ConnectToURLFragment extends android.app.Fragment {
                     StringBuilder sb = new StringBuilder();
                     BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(), "UTF-8"));
                     String line;
+
                     while ((line = in.readLine()) != null) {
+
                         sb.append(line);
+
                         sb.append("\n");
                     }
+
                     return sb.toString();
                 } else {
                     return "fail " + httpURLConnection.getResponseCode() + " " + httpURLConnection.getResponseMessage();

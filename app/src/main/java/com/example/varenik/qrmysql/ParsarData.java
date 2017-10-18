@@ -10,11 +10,11 @@ import org.json.JSONObject;
 
 public class ParsarData {
     String singleJO;
-
+    JSONObject JO;
 
     public String dataParsed(String sb) {
         try {
-            JSONObject JO = new JSONObject(sb);
+                JO = new JSONObject(sb);
 
             if (JO.get("success").toString().equals("0")){
                 return JO.get("message").toString();
@@ -23,8 +23,7 @@ public class ParsarData {
 
             if (JA.length() == 1) {
                 JSONObject singItem = (JSONObject) JA.get(0);
-
-                 singleJO = "number:  " + singItem.getString("number") + "\n" +
+                singleJO = "number:  " + singItem.getString("number") + "\n" +
                         "item:   " + singItem.getString("item") + "\n" +
                         "owner:  " + singItem.getString("owner") + "\n" +
                         "location:  " + singItem.getString("location") + "\n" +
@@ -33,7 +32,7 @@ public class ParsarData {
 
         } catch (JSONException e) {
             e.printStackTrace();
-            return e.getMessage();
+            return sb + e.getMessage();
         }
 
 

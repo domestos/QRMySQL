@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressBar progressBar;
     private ConnectToURLFragment connectToURLFragment;
     private String TAG_FRAGMENT = "TAG_URL_connect";
-    private String URL_ADDRESS = "http://varenikhome.ddns.net/PHPScript/db_select.php?number=";
+    private String URL_ADDRESS = "http://lvilwks0004.lvi.gameloft.org/PHPScript/db_select.php?number=";
     private EditText etInventNumber;
     public static TextView tvInfoItem;
 
@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
 
-
                 IntentIntegrator scanIntegrator = new IntentIntegrator(MainActivity.this);
                 scanIntegrator.initiateScan();
 
@@ -78,10 +77,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
     }
-
-
-
-
 
 
     // Fragment запускає цей метод (показує стан AsyncTasks)
@@ -100,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //записуємо створений екземпляр MainFragment у FragmentManager
             getFragmentManager().beginTransaction().add(connectToURLFragment, TAG_FRAGMENT).commit();
         }
+        tvInfoItem.setText(Const.saveInfoItem);
         return connectToURLFragment;
     }
 
@@ -142,8 +138,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnSearche:
                 showProgress(true);
-
                 connectToURLFragment.startGetJSON(Const.URL_ADDRESS + "'" + etInventNumber.getText().toString() + "'");
+
 
                 break;
 
@@ -151,7 +147,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             case R.id.btnEdit:
-                connectToURLFragment.stop();
+                Intent intent = new Intent(this,EditActivity.class);
+                startActivity(intent);
                 break;
         }
     }

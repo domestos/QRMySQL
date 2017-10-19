@@ -3,6 +3,7 @@ package com.example.varenik.qrmysql;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,25 +11,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
-/**
- * Created by varenik on 15.10.17.
- * <p>
- * щоб клав вернув String  в форматі JSON необхіно
- * викликати його метод startGetJSON()
- * та отримати змінну за допомогою getURLRequest()
- */
 
-public class ConnectToURLFragment extends android.app.Fragment {
+public class EditActivityFragment extends android.app.Fragment {
 
     private boolean isWork = false; //інформує актівіті про стан AsyncTask
     public ConnectToURLAsyncTask connectToURLAsyncTask;
-    private MainActivity activity;
-    public String URLRequest = "waiting";
-    public Const c = new Const();
-   private ParsarData  parsarData= new ParsarData();
-
+    private EditActivity activity;
+    private ParsarData parsarData = new ParsarData();
 
 
     @Override
@@ -41,7 +31,7 @@ public class ConnectToURLFragment extends android.app.Fragment {
      * Даний метод викликається в методі onCreate() класу MainActivity,
      * тому ми завжди будемо мати актуальний activity, навіть при повороті екрану.
      */
-    public MainActivity link(MainActivity activity) {
+    public EditActivity link(EditActivity activity) {
         return this.activity = activity;
     }
 
@@ -49,8 +39,8 @@ public class ConnectToURLFragment extends android.app.Fragment {
      * цей метод демонструє звязок між класом MainFragment та MainActivity
      * але замість ньоги ми будемо використовувати метод link(...).
      */
-    public MainActivity getMainActvity() {
-        activity = (MainActivity) this.getActivity();
+    public EditActivity getEditActivity() {
+        activity = (EditActivity) this.getActivity();
         return activity;
     }
 
@@ -84,22 +74,24 @@ public class ConnectToURLFragment extends android.app.Fragment {
         protected String doInBackground(String... params) {
             try {
                 Thread.sleep(100);
-
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            return  DoConnect.doConnect(params[0].toString());
+            return DoConnect.doConnect(params[0].toString());
         }
 
-
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+        }
 
         @Override
         protected void onPostExecute(String s) {
-            Const.saveInfoItem = s;
-            activity.showProgress(false);
+
+          Toast.makeText(activity, s, Toast.LENGTH_LONG).show();
+
             isWork = false;
-            s =parsarData.dataParsed(s);
-            activity.tvInfoItem.setText(s);
+            activity.showProgress(isWork);
             connectToURLAsyncTask = null;
         }
 
@@ -110,7 +102,6 @@ public class ConnectToURLFragment extends android.app.Fragment {
             activity.showProgress(isWork);
             super.onCancelled();
         }
-
 
 
     } // end into class

@@ -5,6 +5,6 @@ package com.example.varenik.qrmysql;
  */
 
 public class  Const {
-    public  static String URL_ADDRESS = "http://lvilwks0004.lvi.gameloft.org/PHPScript/db_select.php?number=";
+    public  static String URL_ADDRESS = "http://192.168.1.46/PHPScript/db_select.php?number=";
     public static String saveInfoItem;
 }

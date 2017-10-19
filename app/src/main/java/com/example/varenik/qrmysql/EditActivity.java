@@ -1,5 +1,6 @@
 package com.example.varenik.qrmysql;
 
+import android.app.MediaRouteButton;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,12 +24,15 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tvNumber;
     private EditText etOwner;
     private EditText etDescription;
+    private ProgressBar progressBar;
     private Button btnSave;
-   // private Button btnCancel;
+    // private Button btnCancel;
+    private EditActivityFragment editActivityFragment;
+    private String TAG_FRAGMENT = "TAG_Edit_URL_connect";
     private String urlEdit;
     private JSONObject JO;
     private Spinner spLocation;
-    private String[] arrayLocation = {"","QA Red", "Administration", "BB", "Meeting Room", "QA Black", "QA Green", "QA White", "SMU", "Server Room", "Test room", "Training Room", "WAA", "Warehouse"};
+    private String[] arrayLocation = {"", "QA Red", "Administration", "BB", "Meeting Room", "QA Black", "QA Green", "QA White", "SMU", "Server Room", "Test room", "Training Room", "WAA", "Warehouse"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +50,25 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 
         btnSave = (Button) findViewById(R.id.btnSave);
         btnSave.setOnClickListener(this);
-      //  btnCancel = (Button) findViewById(R.id.btnCancel);
-       // btnCancel.setOnClickListener(this);
+        //  btnCancel = (Button) findViewById(R.id.btnCancel);
+        // btnCancel.setOnClickListener(this);
 
         spLocation = (Spinner) findViewById(R.id.spLocation);
         spLocation.setAdapter(locations);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-       //  spLocation.setSelection(2);
-        Log.e("TAG_location", "create");
+        editActivityFragment = getEditActivityFragment();
+        //Передаємо об"єкту MainFragment актівіті
+        editActivityFragment.link(this);
+
+        // визначаємо в якому стані AsyncTask
+        // mainFragment.getIsWork() - повертає true якщо виконується процес, false - якщо він в стані спокою
+
+        showProgress(editActivityFragment.getIsWork());
 
         setSelectItem(spLocation);
         spLocation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -69,41 +82,65 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         getValues(Const.saveInfoItem);
-
+        Toast.makeText(this, Const.saveInfoItem, Toast.LENGTH_LONG).show();
     }
+
+
+    // Fragment запускає цей метод (показує стан AsyncTasks)
+    public void showProgress(boolean show) {
+
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+
+
+    public EditActivityFragment getEditActivityFragment() {
+        //перевіряємо чи існує фрагмент і присвоюємо результат перевірки змінній
+        editActivityFragment = (EditActivityFragment) getFragmentManager().findFragmentByTag(TAG_FRAGMENT);
+        //якщо перевірка верне null, то означає,
+        // що фрагмент раніше не був створений і його нобхідно створити
+        if (editActivityFragment == null) {
+            editActivityFragment = new EditActivityFragment();
+            //записуємо створений екземпляр MainFragment у FragmentManager
+            getFragmentManager().beginTransaction().add(editActivityFragment, TAG_FRAGMENT).commit();
+        }
+
+        return editActivityFragment;
+    }
+
+
 
     private void setSelectItem(Spinner spLocation) {
 
         Log.d("TAG_location", "select Item");
-            try {
-                JO = new JSONObject(Const.saveInfoItem);
-                JSONArray JA = new JSONArray(JO.get("product").toString());
-                if (JA.length() == 1) {
-                    JSONObject singItem = (JSONObject) JA.get(0);
-                    int i = 0;
-                    String localtion;
-                    String chek;
-                    while (arrayLocation.length > i){
-                        localtion=singItem.getString("location");
-                        chek = arrayLocation[i];
+        try {
+            JO = new JSONObject(Const.saveInfoItem);
+            JSONArray JA = new JSONArray(JO.get("product").toString());
+            if (JA.length() == 1) {
+                JSONObject singItem = (JSONObject) JA.get(0);
+                int i = 0;
+                String localtion;
+                String chek;
+                while (arrayLocation.length > i) {
+                    localtion = singItem.getString("location");
+                    chek = arrayLocation[i];
 
-                        if(localtion.equals(chek)){
-                            spLocation.setSelection(i);
-                                                 }
-                        Log.d("TAG_location", localtion +" = "+arrayLocation[i]);
-                        i++;
+                    if (localtion.equals(chek)) {
+                        spLocation.setSelection(i);
                     }
+                    Log.d("TAG_location", localtion + " = " + arrayLocation[i]);
+                    i++;
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-       }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 
+    public void getValues(String sb) {
 
-    public void getValues(String sb){
-
-        if(Const.saveInfoItem != null) {
+        if (Const.saveInfoItem != null) {
             try {
                 JO = new JSONObject(sb);
                 JSONArray JA = new JSONArray(JO.get("product").toString());
@@ -124,22 +161,25 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnSave:
-                Toast.makeText(getBaseContext(), "Start SAVE", Toast.LENGTH_LONG).show();
-                Toast.makeText(getBaseContext(), createJSONObject(), Toast.LENGTH_LONG).show();
-                createJSONObject();
-                break;
-      //      case R.id.btnCancel:
 
-              //  break;
+                Toast.makeText(getBaseContext(), createJSONObject(), Toast.LENGTH_LONG).show();
+                editActivityFragment.startGetJSON( createJSONObject());
+                break;
+            //      case R.id.btnCancel:
+
+            //  break;
         }
     }
 
     private String createJSONObject() {
-     return    urlEdit= "http://lvilwks0004/PHPScript/db_update.php?id="+tvId.getText().toString()+"\""+
-                                                            "number="+tvNumber.getText().toString()+"\""+
-                                                            "owner="+etOwner.getText().toString()+"\""+
-                                                            "location="+spLocation.getSelectedItem().toString()+"\""+
-                                                            "description="+etDescription.getText().toString()+"\""       ;
+      //  http://lvilwks0004/PHPScript/db_update.php?id=6&number=240415/6/1&owner=Valera.p&location=QA%20Black&descripton=Lol
+        return urlEdit = "http://192.168.1.46/PHPScript/db_update.php?id=" + tvId.getText().toString() +
+                "&number="+  tvNumber.getText().toString() +
+                "&owner="+ etOwner.getText().toString() +
+                "&location=" + spLocation.getSelectedItem().toString() +
+                "26&description="+  etDescription.getText().toString() ;
+
 
     }
+
 }

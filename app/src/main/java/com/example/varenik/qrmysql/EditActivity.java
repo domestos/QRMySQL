@@ -24,7 +24,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     private EditText etDescription;
     private Button btnSave;
    // private Button btnCancel;
-
+    private String urlEdit;
     private JSONObject JO;
     private Spinner spLocation;
     private String[] arrayLocation = {"","QA Red", "Administration", "BB", "Meeting Room", "QA Black", "QA Green", "QA White", "SMU", "Server Room", "Test room", "Training Room", "WAA", "Warehouse"};
@@ -125,6 +125,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnSave:
                 Toast.makeText(getBaseContext(), "Start SAVE", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), createJSONObject(), Toast.LENGTH_LONG).show();
                 createJSONObject();
                 break;
       //      case R.id.btnCancel:
@@ -133,9 +134,12 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void createJSONObject() {
-
-
+    private String createJSONObject() {
+     return    urlEdit= "http://lvilwks0004/PHPScript/db_update.php?id="+tvId.getText().toString()+"\""+
+                                                            "number="+tvNumber.getText().toString()+"\""+
+                                                            "owner="+etOwner.getText().toString()+"\""+
+                                                            "location="+spLocation.getSelectedItem().toString()+"\""+
+                                                            "description="+etDescription.getText().toString()+"\""       ;
 
     }
 }

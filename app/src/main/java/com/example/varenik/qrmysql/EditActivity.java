@@ -1,11 +1,13 @@
 package com.example.varenik.qrmysql;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -15,10 +17,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EditActivity extends AppCompatActivity {
+public class EditActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView tvId;
     private TextView tvNumber;
     private EditText etOwner;
+    private EditText etDescription;
+    private Button btnSave;
+   // private Button btnCancel;
+
     private JSONObject JO;
     private Spinner spLocation;
     private String[] arrayLocation = {"","QA Red", "Administration", "BB", "Meeting Room", "QA Black", "QA Green", "QA White", "SMU", "Server Room", "Test room", "Training Room", "WAA", "Warehouse"};
@@ -33,7 +39,14 @@ public class EditActivity extends AppCompatActivity {
 
         tvId = (TextView) findViewById(R.id.tvId);
         tvNumber = (TextView) findViewById(R.id.tvNumber);
+
         etOwner = (EditText) findViewById(R.id.etOwner);
+        etDescription = (EditText) findViewById(R.id.etDescription);
+
+        btnSave = (Button) findViewById(R.id.btnSave);
+        btnSave.setOnClickListener(this);
+      //  btnCancel = (Button) findViewById(R.id.btnCancel);
+       // btnCancel.setOnClickListener(this);
 
         spLocation = (Spinner) findViewById(R.id.spLocation);
         spLocation.setAdapter(locations);
@@ -44,13 +57,9 @@ public class EditActivity extends AppCompatActivity {
         setSelectItem(spLocation);
         spLocation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-
-
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
                 Toast.makeText(getBaseContext(), adapterView.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
-
             }
 
             @Override
@@ -84,24 +93,17 @@ public class EditActivity extends AppCompatActivity {
                         Log.d("TAG_location", localtion +" = "+arrayLocation[i]);
                         i++;
                     }
-
                 }
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
-        }
+       }
 
 
 
     public void getValues(String sb){
 
         if(Const.saveInfoItem != null) {
-
-
             try {
                 JO = new JSONObject(sb);
                 JSONArray JA = new JSONArray(JO.get("product").toString());
@@ -110,16 +112,30 @@ public class EditActivity extends AppCompatActivity {
                     tvId.setText(singItem.getString("id"));
                     tvNumber.setText(singItem.getString("number"));
                     etOwner.setText(singItem.getString("owner"));
-
+                    etDescription.setText(singItem.getString("description"));
                 }
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnSave:
+                Toast.makeText(getBaseContext(), "Start SAVE", Toast.LENGTH_LONG).show();
+                createJSONObject();
+                break;
+      //      case R.id.btnCancel:
+
+              //  break;
+        }
+    }
+
+    private void createJSONObject() {
+
+
+
+    }
 }

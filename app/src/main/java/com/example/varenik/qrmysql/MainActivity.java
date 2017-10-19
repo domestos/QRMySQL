@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressBar progressBar;
     private ConnectToURLFragment connectToURLFragment;
     private String TAG_FRAGMENT = "TAG_URL_connect";
-    private String URL_ADDRESS = "http://lvilwks0004.lvi.gameloft.org/PHPScript/db_select.php?number=";
     private EditText etInventNumber;
     public static TextView tvInfoItem;
 

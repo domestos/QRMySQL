@@ -80,7 +80,6 @@ public class ConnectToURLFragment extends android.app.Fragment {
             activity.showProgress(isWork);
         }
 
-
         @Override
         protected String doInBackground(String... params) {
             try {
@@ -98,10 +97,8 @@ public class ConnectToURLFragment extends android.app.Fragment {
             super.onProgressUpdate(values);
         }
 
-
         @Override
         protected void onPostExecute(String s) {
-
             Const.saveInfoItem = s;
             activity.showProgress(false);
             isWork = false;
@@ -115,7 +112,6 @@ public class ConnectToURLFragment extends android.app.Fragment {
             Log.i("log", "cancelled");
             isWork = false;
             activity.showProgress(isWork);
-
             super.onCancelled();
         }
 
@@ -124,7 +120,6 @@ public class ConnectToURLFragment extends android.app.Fragment {
 
         private String doConnect(String s) {
             URL url = null;
-
             try {
                 url = new URL(s);
             } catch (MalformedURLException e) {

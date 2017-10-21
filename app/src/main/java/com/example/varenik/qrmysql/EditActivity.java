@@ -1,9 +1,7 @@
 package com.example.varenik.qrmysql;
 
-import android.app.MediaRouteButton;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,9 +13,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.varenik.qrmysql.helper.BoxValues;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView tvId;
@@ -81,8 +86,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        getValues(Const.saveInfoItem);
-        Toast.makeText(this, Const.saveInfoItem, Toast.LENGTH_LONG).show();
+        getValues(BoxValues.saveInfoItem);
+        Toast.makeText(this, BoxValues.saveInfoItem, Toast.LENGTH_LONG).show();
     }
 
 
@@ -114,15 +119,15 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 
         Log.d("TAG_location", "select Item");
         try {
-            JO = new JSONObject(Const.saveInfoItem);
-            JSONArray JA = new JSONArray(JO.get("product").toString());
-            if (JA.length() == 1) {
-                JSONObject singItem = (JSONObject) JA.get(0);
+            JO = new JSONObject(BoxValues.saveInfoItem);
+
+        Log.d(BoxValues.TAG_LOG, BoxValues.saveInfoItem);
+
                 int i = 0;
                 String localtion;
                 String chek;
                 while (arrayLocation.length > i) {
-                    localtion = singItem.getString("location");
+                    localtion = JO.getString("location");
                     chek = arrayLocation[i];
 
                     if (localtion.equals(chek)) {
@@ -131,7 +136,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("TAG_location", localtion + " = " + arrayLocation[i]);
                     i++;
                 }
-            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -140,18 +145,17 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 
     public void getValues(String sb) {
 
-        if (Const.saveInfoItem != null) {
+        if (BoxValues.saveInfoItem != null) {
             try {
                 JO = new JSONObject(sb);
-                JSONArray JA = new JSONArray(JO.get("product").toString());
-                if (JA.length() == 1) {
-                    JSONObject singItem = (JSONObject) JA.get(0);
-                    tvId.setText(singItem.getString("id"));
-                    tvNumber.setText(singItem.getString("number"));
-                    etOwner.setText(singItem.getString("owner"));
-                    etDescription.setText(singItem.getString("description"));
-                }
-            } catch (JSONException e) {
+
+
+                    tvId.setText(JO.getString("id"));
+                    tvNumber.setText(JO.getString("number"));
+                    etOwner.setText(JO.getString("owner"));
+                    etDescription.setText(JO.getString("description"));
+
+                            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
@@ -162,8 +166,9 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnSave:
 
-                Toast.makeText(getBaseContext(), createJSONObject(), Toast.LENGTH_LONG).show();
-                editActivityFragment.startGetJSON( createJSONObject());
+                Toast.makeText(getBaseContext(), "Start Save", Toast.LENGTH_LONG).show();
+                List<NameValuePair> params = getListOfNameValuePair();
+                editActivityFragment.saveChange(params);
                 break;
             //      case R.id.btnCancel:
 
@@ -171,15 +176,29 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private String createJSONObject() {
-      //  http://lvilwks0004/PHPScript/db_update.php?id=6&number=240415/6/1&owner=Valera.p&location=QA%20Black&descripton=Lol
-        return urlEdit = "http://192.168.1.46/PHPScript/db_update.php?id=" + tvId.getText().toString() +
-                "&number="+  tvNumber.getText().toString() +
-                "&owner="+ etOwner.getText().toString() +
-                "&location=" + spLocation.getSelectedItem().toString() +
-                "26&description="+  etDescription.getText().toString() ;
+    private List<NameValuePair> getListOfNameValuePair() {
+        List<NameValuePair> params  =new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("id", tvId.getText().toString() )) ;
+        params.add(new BasicNameValuePair("number", tvNumber.getText().toString() )) ;
+        params.add(new BasicNameValuePair("owner", etOwner.getText().toString() )) ;
+        params.add(new BasicNameValuePair("location", spLocation.getSelectedItem().toString())) ;
+        params.add(new BasicNameValuePair("description", etDescription.getText().toString() )) ;
 
-
+        return params;
     }
+
+//    private String createJSONObject() {
+//      //  http://lvilwks0004/PHPScript/db_update.php?id=6&number=240415/6/1&owner=Valera.p&location=QA%20Black&descripton=Lol
+//        return urlEdit = "http://192.168.1.46/PHPScript/db_update.php?id=" + tvId.getText().toString() +
+//                "&number="+  tvNumber.getText().toString() +
+//                "&owner="+ etOwner.getText().toString() +
+//                "&location=" + spLocation.getSelectedItem().toString() +
+//                "26&description="+  etDescription.getText().toString() ;
+//
+//
+//    }
+
+
+
 
 }

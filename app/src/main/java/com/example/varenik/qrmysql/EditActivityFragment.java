@@ -5,20 +5,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.example.varenik.qrmysql.helper.BoxValues;
+import com.example.varenik.qrmysql.helper.JSONParser;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class EditActivityFragment extends android.app.Fragment {
 
     private boolean isWork = false; //інформує актівіті про стан AsyncTask
-    public ConnectToURLAsyncTask connectToURLAsyncTask;
+    public EditActivityFragmentAsyncTask editActivityFragmentAsyncTask;
     private EditActivity activity;
     private ParsarData parsarData = new ParsarData();
+    private JSONParser jsonParser = new JSONParser();
 
 
     @Override
@@ -44,15 +48,15 @@ public class EditActivityFragment extends android.app.Fragment {
         return activity;
     }
 
-    public void startGetJSON(String url) {
-        connectToURLAsyncTask = new ConnectToURLAsyncTask();
-        connectToURLAsyncTask.execute(url);
-    }
+//    public void startGetJSON(String url) {
+//        editActivityFragmentAsyncTask = new EditActivityFragmentAsyncTask();
+//        editActivityFragmentAsyncTask.execute(url);
+//    }
 
 
     public void stop() {
-        if (connectToURLAsyncTask != null) {
-            connectToURLAsyncTask.cancel(true);
+        if (editActivityFragmentAsyncTask != null) {
+            editActivityFragmentAsyncTask.cancel(true);
         }
     }
 
@@ -60,9 +64,15 @@ public class EditActivityFragment extends android.app.Fragment {
         return isWork;
     }
 
+    public void saveChange(List<NameValuePair> params) {
+        editActivityFragmentAsyncTask = new EditActivityFragmentAsyncTask();
+        editActivityFragmentAsyncTask.execute(params);
+
+    }
+
 
     // ==================== INTO CLASS =======================
-    class ConnectToURLAsyncTask extends AsyncTask<String, String, String> {
+    class EditActivityFragmentAsyncTask extends AsyncTask<List<NameValuePair> , String, String> {
 
         @Override
         protected void onPreExecute() {
@@ -71,13 +81,13 @@ public class EditActivityFragment extends android.app.Fragment {
         }
 
         @Override
-        protected String doInBackground(String... params) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return DoConnect.doConnect(params[0].toString());
+        protected String doInBackground(List<NameValuePair> ... params) {
+            Log.d(BoxValues.TAG_LOG, "URL_SELECT_UPDATE= "+ BoxValues.URL_SELECT_UPDATE);
+            // получаем продукт по HTTP запросу
+            JSONObject json = jsonParser.makeHttpRequest(BoxValues.URL_SELECT_UPDATE, "POST", params[0]);
+
+
+            return json.toString();
         }
 
         @Override
@@ -92,7 +102,7 @@ public class EditActivityFragment extends android.app.Fragment {
 
             isWork = false;
             activity.showProgress(isWork);
-            connectToURLAsyncTask = null;
+            editActivityFragmentAsyncTask = null;
         }
 
         @Override

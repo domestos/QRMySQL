@@ -1,7 +1,6 @@
 package com.example.varenik.qrmysql;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.varenik.qrmysql.helper.BoxValues;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnEdit;
     public TextView tvUpdate = null;
     private ProgressBar progressBar;
-    private ConnectToURLFragment connectToURLFragment;
+    private MainActivityFragment mainActivityFragment;
     private String TAG_FRAGMENT = "TAG_URL_connect";
     private EditText etInventNumber;
     public static TextView tvInfoItem;
@@ -53,12 +53,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etInventNumber = (EditText) findViewById(R.id.etInventNumber);
         tvInfoItem = (TextView) findViewById(R.id.tvInfoItem);
 
-        connectToURLFragment = getConnectToURLFragment();
+        mainActivityFragment = getMainActivityFragment();
         //Передаємо об"єкту MainFragment актівіті
-        connectToURLFragment.link(this);
+        mainActivityFragment.link(this);
         // визначаємо в якому стані AsyncTask
         // mainFragment.getIsWork() - повертає true якщо виконується процес, false - якщо він в стані спокою
-        showProgress(connectToURLFragment.getIsWork());
+        showProgress(mainActivityFragment.getIsWork());
 
 
 
@@ -84,18 +84,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public ConnectToURLFragment getConnectToURLFragment() {
+    public MainActivityFragment getMainActivityFragment() {
         //перевіряємо чи існує фрагмент і присвоюємо результат перевірки змінній
-        connectToURLFragment = (ConnectToURLFragment) getFragmentManager().findFragmentByTag(TAG_FRAGMENT);
+        mainActivityFragment = (MainActivityFragment) getFragmentManager().findFragmentByTag(TAG_FRAGMENT);
         //якщо перевірка верне null, то означає,
         // що фрагмент раніше не був створений і його нобхідно створити
-        if (connectToURLFragment == null) {
-            connectToURLFragment = new ConnectToURLFragment();
+        if (mainActivityFragment == null) {
+            mainActivityFragment = new MainActivityFragment();
             //записуємо створений екземпляр MainFragment у FragmentManager
-            getFragmentManager().beginTransaction().add(connectToURLFragment, TAG_FRAGMENT).commit();
+            getFragmentManager().beginTransaction().add(mainActivityFragment, TAG_FRAGMENT).commit();
         }
-        tvInfoItem.setText(Const.saveInfoItem);
-        return connectToURLFragment;
+        tvInfoItem.setText(BoxValues.saveInfoItem);
+        return mainActivityFragment;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // завершує роботу AsyncTask якщо нажата кнопка Back
         if (isFinishing()) {
-            connectToURLFragment.stop();
+            mainActivityFragment.stop();
         }
     }
 
@@ -137,12 +137,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnSearche:
                 showProgress(true);
-                connectToURLFragment.startGetJSON(Const.URL_ADDRESS + "'" + etInventNumber.getText().toString() + "'");
+                mainActivityFragment.startGetJSON(etInventNumber.getText().toString());
 
 
                 break;
 
-            // tvUpdate.setText(connectToURLFragment.getURLRequest());
+            // tvUpdate.setText(mainActivityFragment.getURLRequest());
 
 
             case R.id.btnEdit:
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
                 etInventNumber.setText(result.getContents());
-                connectToURLFragment.startGetJSON(Const.URL_ADDRESS + "'" + etInventNumber.getText().toString() + "'");
+                mainActivityFragment.startGetJSON(etInventNumber.getText().toString());
 
                 //Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
 

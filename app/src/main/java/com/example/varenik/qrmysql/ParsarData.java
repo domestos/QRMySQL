@@ -15,22 +15,21 @@ public class ParsarData {
     public String dataParsed(String sb) {
         try {
             JO = new JSONObject(sb);
+//
+//            if (JO.get("success").toString().equals("0")) {
+//                return JO.get("message").toString();
+//            }
+           // JSONArray JA = new JSONArray(JO.get("product").toString());
 
-            if (JO.get("success").toString().equals("0")) {
-                return JO.get("message").toString();
-            }
-            JSONArray JA = new JSONArray(JO.get("product").toString());
 
-            if (JA.length() == 1) {
-                JSONObject singItem = (JSONObject) JA.get(0);
+              //  JSONObject singItem = (JSONObject) JA.get(0);
 
-                singleJO = "id:  " + singItem.getString("id") + "\n" +
-                        "number:  " + singItem.getString("number") + "\n" +
-                        "item:   " + singItem.getString("item") + "\n" +
-                        "owner:  " + singItem.getString("owner") + "\n" +
-                        "location:  " + singItem.getString("location") + "\n" +
-                        "description:  " + singItem.getString("description");
-            }
+                singleJO = "id:  " + JO.getString("id") + "\n" +
+                        "number:  " + JO.getString("number") + "\n" +
+                        "item:   " + JO.getString("item") + "\n" +
+                        "owner:  " + JO.getString("owner") + "\n" +
+                        "location:  " + JO.getString("location") + "\n" +
+                        "description:  " + JO.getString("description");
 
         } catch (JSONException e) {
             e.printStackTrace();

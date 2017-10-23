@@ -20,14 +20,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="id" />
+            android:background="@color/colorPrimary"
+            android:text="id"
+            android:textColor="@color/colorAccent"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tvNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="number" />
+            android:background="@color/colorPrimary"
+            android:text="number"
+            android:textColor="@color/colorAccent"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tvItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:text="TextView"
+            android:textColor="@android:color/background_light"
+            android:textSize="24dp" />
 
         <EditText
             android:id="@+id/etOwner"
@@ -36,12 +52,14 @@
             android:layout_weight="1"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="owner" />
+            android:text="owner"
+            android:textSize="18sp" />
 
         <Spinner
             android:id="@+id/spLocation"
             android:layout_width="match_parent"
-            android:layout_height="48dp" />
+            android:layout_height="50dp"
+            android:theme="@style/Base.TextAppearance.AppCompat.Widget.DropDownItem" />
 
         <EditText
             android:id="@+id/etDescription"
@@ -50,18 +68,12 @@
             android:layout_weight="1"
             android:ems="10"
             android:inputType="textMultiLine"
-            android:text="Description:" />
+            android:text="Description:"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ProgressBar
@@ -70,16 +82,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.34"
-                android:text="Save"
-                tools:layout_editor_absoluteX="16dp"
-                tools:layout_editor_absoluteY="397dp" />
-
+                android:layout_weight="1"
+                android:text="Save" />
         </LinearLayout>
     </LinearLayout>
 

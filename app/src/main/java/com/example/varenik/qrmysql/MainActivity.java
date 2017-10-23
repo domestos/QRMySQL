@@ -3,10 +3,12 @@ package com.example.varenik.qrmysql;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +22,10 @@ import com.example.varenik.qrmysql.helper.BoxValues;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONObject;
+
+import java.io.Serializable;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
@@ -31,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String TAG_FRAGMENT = "TAG_URL_connect";
     private EditText etInventNumber;
     public static TextView tvInfoItem;
+    private ParsarData parsarData = new ParsarData() ;
+    private JSONObject jsonURLResponse = mainActivityFragment.getJsonURLResponse();
 
 
     @Override
@@ -42,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         //==============Fragment =================
-        tvUpdate = (TextView) findViewById(R.id.tvUpdate);
+
         btnSearche = (Button) findViewById(R.id.btnSearche);
         btnEdit = (Button) findViewById(R.id.btnEdit);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -94,7 +102,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //записуємо створений екземпляр MainFragment у FragmentManager
             getFragmentManager().beginTransaction().add(mainActivityFragment, TAG_FRAGMENT).commit();
         }
-        tvInfoItem.setText(BoxValues.saveInfoItem);
+        if(jsonURLResponse !=null){
+
+            //якщо був повернутий екран
+            Log.d(BoxValues.TAG_LOG, "поворот екрану "+ jsonURLResponse.toString());
+            tvInfoItem.setText(parsarData.dataParsed(jsonURLResponse));
+        }
         return mainActivityFragment;
     }
 
@@ -138,8 +151,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnSearche:
                 showProgress(true);
                 mainActivityFragment.startGetJSON(etInventNumber.getText().toString());
-
-
                 break;
 
             // tvUpdate.setText(mainActivityFragment.getURLRequest());
@@ -147,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btnEdit:
                 Intent intent = new Intent(this,EditActivity.class);
+                //передаємо новому активіті json обєкт в форматі String
+                intent.putExtra("jsonURLResponse", jsonURLResponse.toString());
                 startActivity(intent);
                 break;
         }

@@ -1,5 +1,6 @@
 package com.example.varenik.qrmysql;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,10 +26,12 @@ public class EditActivityFragment extends android.app.Fragment {
     private JSONParser jsonParser = new JSONParser();
 
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);//заборона перестворювати фрагмент при повороті екрану
+
     }
 
     /**
@@ -85,7 +88,7 @@ public class EditActivityFragment extends android.app.Fragment {
             Log.d(BoxValues.TAG_LOG, "URL_SELECT_UPDATE= "+ BoxValues.URL_SELECT_UPDATE);
             // получаем продукт по HTTP запросу
             JSONObject json = jsonParser.makeHttpRequest(BoxValues.URL_SELECT_UPDATE, "POST", params[0]);
-
+            if(json == null){}
 
             return json.toString();
         }

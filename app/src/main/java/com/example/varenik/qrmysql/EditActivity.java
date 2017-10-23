@@ -1,5 +1,6 @@
 package com.example.varenik.qrmysql;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -27,6 +28,7 @@ import java.util.List;
 public class EditActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView tvId;
     private TextView tvNumber;
+    private TextView tvItem;
     private EditText etOwner;
     private EditText etDescription;
     private ProgressBar progressBar;
@@ -34,10 +36,13 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     // private Button btnCancel;
     private EditActivityFragment editActivityFragment;
     private String TAG_FRAGMENT = "TAG_Edit_URL_connect";
-    private String urlEdit;
     private JSONObject JO;
     private Spinner spLocation;
     private String[] arrayLocation = {"", "QA Red", "Administration", "BB", "Meeting Room", "QA Black", "QA Green", "QA White", "SMU", "Server Room", "Test room", "Training Room", "WAA", "Warehouse"};
+    Intent intent = getIntent();
+    private String JOString = getIntent().getStringExtra("jsonURLResponse");
+    private JSONObject jsonObject = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 
         tvId = (TextView) findViewById(R.id.tvId);
         tvNumber = (TextView) findViewById(R.id.tvNumber);
+        tvItem = (TextView) findViewById(R.id.tvItem);
 
         etOwner = (EditText) findViewById(R.id.etOwner);
         etDescription = (EditText) findViewById(R.id.etDescription);
@@ -86,8 +92,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        getValues(BoxValues.saveInfoItem);
-        Toast.makeText(this, BoxValues.saveInfoItem, Toast.LENGTH_LONG).show();
+   //     getValues(BoxValues.saveInfoItem);
+  //      Toast.makeText(this, BoxValues.saveInfoItem, Toast.LENGTH_LONG).show();
     }
 
 
@@ -119,9 +125,10 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 
         Log.d("TAG_location", "select Item");
         try {
-            JO = new JSONObject(BoxValues.saveInfoItem);
 
-        Log.d(BoxValues.TAG_LOG, BoxValues.saveInfoItem);
+            JSONArray JA = new JSONArray(jsonProduct.get("product").toString());
+            JSONObject JO = JA.getJSONObject(0);
+            Log.d(BoxValues.TAG_LOG, JO.toString());
 
                 int i = 0;
                 String localtion;
@@ -145,20 +152,19 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 
     public void getValues(String sb) {
 
-        if (BoxValues.saveInfoItem != null) {
+
             try {
                 JO = new JSONObject(sb);
-
-
-                    tvId.setText(JO.getString("id"));
-                    tvNumber.setText(JO.getString("number"));
-                    etOwner.setText(JO.getString("owner"));
-                    etDescription.setText(JO.getString("description"));
+                tvId.setText(JO.getString("id"));
+                tvItem.setText(JO.getString("item"));
+                tvNumber.setText(JO.getString("number"));
+                etOwner.setText(JO.getString("owner"));
+                etDescription.setText(JO.getString("description"));
 
                             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
+
     }
 
     @Override

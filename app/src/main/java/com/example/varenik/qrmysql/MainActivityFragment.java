@@ -22,12 +22,17 @@ public class MainActivityFragment extends android.app.Fragment {
     private boolean isWork = false; //інформує актівіті про стан AsyncTask
     public MainActivityFragmentAsyncTask mainActivityFragmentAsyncTask;
     private MainActivity activity;
-    private String URLResponse;
-
+    private JSONObject jsonURLResponse =null;
     private JSONParser jsonParser = new JSONParser();
     private ParsarData  parsarData= new ParsarData();
 
+    public JSONObject getJsonURLResponse() {
+        return jsonURLResponse;
+    }
 
+    public void setJsonURLResponse(JSONObject jsonURLResponse) {
+        this.jsonURLResponse = jsonURLResponse;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,7 +75,7 @@ public class MainActivityFragment extends android.app.Fragment {
 
 
     // ==================== INTO CLASS =======================
-    class MainActivityFragmentAsyncTask extends AsyncTask<String, String, String> {
+    class MainActivityFragmentAsyncTask extends AsyncTask<String, String, JSONObject> {
 
         @Override
         protected void onPreExecute() {
@@ -79,7 +84,7 @@ public class MainActivityFragment extends android.app.Fragment {
         }
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected JSONObject doInBackground(String... strings) {
             String number =  "'"+strings[0].toString()+"'";
             Log.d(BoxValues.TAG_LOG, "number= "+ number);
             int success ;
@@ -89,35 +94,17 @@ public class MainActivityFragment extends android.app.Fragment {
             params.add(new BasicNameValuePair("number", number));
             // получаем продукт по HTTP запросу
             JSONObject json = jsonParser.makeHttpRequest(BoxValues.URL_SELECT_NUMEBER, "GET", params);
-
-
-            try {
-        //        Log.d(BoxValues.TAG_LOG, json.toString());
-                success = json.getInt(BoxValues.TAG_SUCCESS);
-                if (success ==1){
-                    // Успешно получинна детальная информация о продукте
-                    productObj = json.getJSONArray(BoxValues.TAG_PRODUCT);
-                    JSONObject product = productObj.getJSONObject(0);
-                    Log.d(BoxValues.TAG_LOG, "product= "+ product);
-                    return   product.toString();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            return null;
+            return json;
         }
 
 
 
         @Override
-        protected void onPostExecute(String s) {
-
+        protected void onPostExecute(JSONObject json) {
+            jsonURLResponse = json;
+            activity.tvInfoItem.setText(parsarData.dataParsed(json));
             activity.showProgress(false);
             isWork = false;
-            BoxValues.saveInfoItem = s;
-            s =parsarData.dataParsed(s);
-            activity.tvInfoItem.setText(s);
             mainActivityFragmentAsyncTask = null;
         }
 

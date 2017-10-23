@@ -63,12 +63,14 @@ public class JSONParser {
                 is = httpEntity.getContent();
             }
 
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            Log.d(TAG_LOG, "1"+ e.getMessage());
         } catch (ClientProtocolException e) {
-            e.printStackTrace();
+            Log.d(TAG_LOG, "2"+e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d(TAG_LOG, "3"+e.getMessage());
         }
 
         //iso-8859-1
@@ -83,14 +85,14 @@ public class JSONParser {
             is.close();
             json = sb.toString();
         } catch (Exception e) {
-            Log.e("Buffer Error", "Error converting result " + e.toString());
+            Log.e(BoxValues.TAG_LOG, " Buffer ErrorError converting result " + e.toString());
         }
 
         // пытаемся распарсить строку в JSON объект
         try {
             jObj = new JSONObject(json);
         } catch (JSONException e) {
-            Log.e("JSON Parser", "Error parsing data " + e.toString());
+            Log.e(BoxValues.TAG_LOG, "JSON Parser Error parsing data " + e.toString());
         }
 
         // возвращаем JSON строку

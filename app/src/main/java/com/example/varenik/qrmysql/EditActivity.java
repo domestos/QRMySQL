@@ -126,7 +126,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         Log.d("TAG_location", "select Item");
         try {
 
-            JSONArray JA = new JSONArray(jsonProduct.get("product").toString());
+            JSONArray JA = new JSONArray(jsonObject.get("product").toString());
             JSONObject JO = JA.getJSONObject(0);
             Log.d(BoxValues.TAG_LOG, JO.toString());
 

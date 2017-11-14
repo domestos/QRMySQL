@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/llEdit"
     android:layout_width="match_parent"
@@ -54,12 +53,6 @@
             android:inputType="textPersonName"
             android:text="owner"
             android:textSize="18sp" />
-
-        <Spinner
-            android:id="@+id/spLocation"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:theme="@style/Base.TextAppearance.AppCompat.Widget.DropDownItem" />
 
         <EditText
             android:id="@+id/etDescription"
